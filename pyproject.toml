@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zivra-assistant"
+version = "0.3.0"
+description = "ZIVRA: a local-first, modular Windows command assistant"
+requires-python = ">=3.11,<3.15"
+dependencies = ["PySide6==6.10.2", "psutil==7.2.2"]
+
+[project.optional-dependencies]
+dev = ["pytest==9.0.2", "pyinstaller==6.19.0"]
+
+[project.gui-scripts]
+zivra = "zivra.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["zivra*"]
+
+[tool.setuptools.package-data]
+zivra = ["resources/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,37 @@
+name: Tests and Windows package
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --require-hashes -r requirements-lock.txt
+      - run: python -m pip install --no-deps --no-build-isolation -e .
+      - run: python -m pytest -q
+      - run: python -m zivra --smoke-test
+        env:
+          ZIVRA_DATA_DIR: ${{ runner.temp }}/zivra-smoke
+      - name: Package and test Windows executable
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm packaging/ZIVRA.spec
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:ZIVRA_DATA_DIR = Join-Path $env:RUNNER_TEMP 'zivra-package-smoke'
+          $result = Start-Process -FilePath "$pwd/dist/ZIVRA/ZIVRA.exe" -ArgumentList '--smoke-test' -Wait -PassThru
+          exit $result.ExitCode
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
+        with:
+          name: ZIVRA-Windows
+          path: dist/ZIVRA/
