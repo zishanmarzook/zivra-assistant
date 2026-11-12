@@ -41,11 +41,13 @@ python -m venv .venv
 .venv/bin/python -m pip install --no-deps --no-build-isolation -e .
 QT_QPA_PLATFORM=offscreen .venv/bin/python -m pytest -q
 QT_QPA_PLATFORM=offscreen ZIVRA_DATA_DIR=/tmp/zivra-smoke .venv/bin/python -m zivra --smoke-test
-.venv/bin/python -m zivra --diagnose
+ZIVRA_DATA_DIR=/workspace/scratch/zivra-data .venv/bin/python -m zivra --diagnose
 ```
 
 Use `QT_QPA_PLATFORM=offscreen` only for headless tests. To interact with the app
-on a desktop, run `python -m zivra` with the normal Qt platform. These commands
+on the cloud desktop, run `ZIVRA_DATA_DIR=/workspace/scratch/zivra-data XDG_CACHE_HOME=/tmp/zivra-cache .venv/bin/python -m zivra`
+with the normal Qt platform. The cloud home directory is read-only, so use this
+workspace data override for interactive startup and diagnostics. These commands
 use the existing checkout; an isolated cloud task needs no extra Git worktree.
 
 `requirements-lock.txt` pins the development dependency graph with artifact

@@ -13,6 +13,8 @@ Validated in the Linux cloud environment with Python 3.12 and PySide6 6.10.2.
 - `python -m PyInstaller --noconfirm packaging/ZIVRA.spec` built a Linux artifact;
   `dist/ZIVRA/ZIVRA --smoke-test` successfully exercised the packaged Qt app.
 - `python -m pip check` reported no broken requirements.
+- The cloud home directory is read-only. Interactive startup and diagnostics use
+  `ZIVRA_DATA_DIR=/workspace/scratch/zivra-data`; tests use isolated temporary data.
 
 Brief source and packaged smoke runs measured approximately 74 MB and 81 MB RSS,
 respectively. These are Linux process snapshots, not Windows benchmarks or
